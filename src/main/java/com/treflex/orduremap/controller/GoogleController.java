@@ -1,7 +1,6 @@
 package com.treflex.orduremap.controller;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -18,21 +17,21 @@ import com.treflex.orduremap.FusionTableHelper;
 public class GoogleController {
 	@Autowired
 	private FusionTableHelper ft;
-	private static final Logger LOGGER = LoggerFactory.getLogger("Google authentication");
+	private static final Logger LOGGER = Logger.getLogger("Google authentication");
 
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@RequestMapping(value = "/admin", method = RequestMethod.GET)
 	public void admin() {
 		final Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		if (auth != null) {
-			LOGGER.info("L'utilisateur {} accède à la page d'accueil", auth.getPrincipal().toString());
+			LOGGER.info("L'utilisateur " + auth.getPrincipal().toString() + " accède à la page d'accueil");
 		}
 	}
 
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@RequestMapping(value = "/fusion", method = RequestMethod.GET)
 	public void setToken(final @RequestParam("token") String token) throws AuthenticationException {
-		LOGGER.info("Reçeption d'un nouveau token {}", token);
+		LOGGER.info("Reçeption d'un nouveau token " + token);
 		ft.setToken(token);
 	}
 }

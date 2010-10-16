@@ -19,9 +19,8 @@ import javax.mail.Session;
 import javax.mail.Store;
 import javax.mail.internet.MimeMultipart;
 
+import org.apache.log4j.Logger;
 import org.apache.sanselan.ImageReadException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -41,7 +40,7 @@ public class GpsIndexer {
 	@Autowired
 	private FusionTableHelper fhelper;
 	private final Format dateFormatter = new SimpleDateFormat("yyyy.MM.dd 'à' HH:mm:ss Z", Locale.FRENCH);
-	private static final Logger LOGGER = LoggerFactory.getLogger("Email indexer");
+	private static final Logger LOGGER = Logger.getLogger("Email indexer");
 
 	public void index(final Properties props) {
 		LOGGER.info("Vérification de la boite mail");
@@ -81,7 +80,7 @@ public class GpsIndexer {
 				if (date == null) {
 					date = new Date();
 				}
-				LOGGER.info("Message reçu par {} le {} avec les tags {}", new String[] { from, dateFormatter.format(date), subject });
+				LOGGER.info("Message reçu par " + from + " le " + dateFormatter.format(date) + " avec les tags " + subject);
 				if (content instanceof MimeMultipart) {
 					final MimeMultipart messagePart = (MimeMultipart) content;
 					final int count = messagePart.getCount();
@@ -105,7 +104,7 @@ public class GpsIndexer {
 	public void index(final InputStream imageStream, final String fileName, final String subject, final String from, final Date date) {
 		try {
 			final GPSData gpsData = jpegHelper.getGpsData(imageStream, fileName);
-			LOGGER.info("GPS data: lattitude:{} - longitude:{}", gpsData.getLatitude(), gpsData.getLongitude());
+			LOGGER.info("GPS data: lattitude:" + gpsData.getLatitude() + " - longitude:" + gpsData.getLongitude());
 			final Ordure ordure = new Ordure(gpsData.toString(), subject, from, date);
 			ordureDao.save(ordure);
 			fhelper.insert(ordure);

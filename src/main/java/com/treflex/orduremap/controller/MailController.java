@@ -9,8 +9,7 @@ import javax.mail.MessagingException;
 import javax.mail.Session;
 import javax.mail.internet.MimeMessage;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,7 +18,7 @@ import com.treflex.orduremap.indexer.GpsIndexer;
 
 @Controller
 public class MailController {
-	private static final Logger LOGGER = LoggerFactory.getLogger("Appspot indexer");
+	private static final Logger LOGGER = Logger.getLogger("Appspot indexer");
 
 	@Autowired
 	private GpsIndexer gpsIndexer;
