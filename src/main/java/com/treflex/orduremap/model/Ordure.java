@@ -28,16 +28,16 @@ public class Ordure {
 	@Persistent
 	private Date datePhoto;
 	@Persistent
-	private Blob image;
+	private Blob photo;
 	@Persistent
 	private Blob thumbnail;
 
-	public Blob getImage() {
-		return image;
+	public Blob getPhoto() {
+		return photo;
 	}
 
-	public void setImage(Blob image) {
-		this.image = image;
+	public void setPhoto(Blob photo) {
+		this.photo = photo;
 	}
 
 	public Date getDateReceive() {

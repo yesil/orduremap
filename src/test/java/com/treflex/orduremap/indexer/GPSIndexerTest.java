@@ -1,8 +1,10 @@
 package com.treflex.orduremap.indexer;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Date;
 import java.util.Properties;
 
@@ -37,7 +39,7 @@ public class GPSIndexerTest {
 	@Autowired
 	OrdureDao ordureDao;
 
-	//@Test
+	// @Test
 	public void mailMest() throws MessagingException, IOException, ImageReadException {
 		final Properties props = new Properties();
 		props.put("address", "imap.gmail.com");
@@ -52,9 +54,17 @@ public class GPSIndexerTest {
 		final File file = new File("src/test/resources/gps-images/IMG_0269.jpg").getAbsoluteFile();
 		indexer.index(new FileInputStream(file), file.getName(), "test", "=?ISO-8859-1?Q?ezgi_g=FCven=E7?= <ezgi.guvenc@gmail.com>",
 				new Date());
+		ByteArrayOutputStream bout = new ByteArrayOutputStream();
+		byte[] imageBytes = new byte[4096];
+		InputStream is = new FileInputStream(file);
+		while (is.read(imageBytes) != -1) {
+			bout.write(imageBytes);
+		}
 		Key key = KeyFactory.createKey("Ordure", 1);
 		Ordure found = ordureDao.find(key);
-		Assert.assertEquals("ezgi.guvenc@gmail.com", found.getReporter());
+
+		Assert.assertArrayEquals(bout.toByteArray(), found.getPhoto().getBytes());
+		// Assert.assertEquals("ezgi.guvenc@gm ail.com", found.getReporter());
 	}
 
 	@Before

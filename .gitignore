@@ -1,0 +1,4 @@
+
+/src/main/webapp/WEB-INF/lib
+/datanucleus.log
+/src/main/webapp/WEB-INF/appengine-generated/datastore-indexes-auto.xml

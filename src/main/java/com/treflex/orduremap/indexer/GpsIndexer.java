@@ -130,7 +130,7 @@ public class GpsIndexer {
 			while (bis.read(imageBytes) != -1) {
 				bout.write(imageBytes);
 			}
-			ordure.setImage(new Blob(bout.toByteArray()));
+			ordure.setPhoto(new Blob(bout.toByteArray()));
 			ordureDao.save(ordure);
 			fhelper.insert(ordure);
 		} catch (ImageReadException e) {
