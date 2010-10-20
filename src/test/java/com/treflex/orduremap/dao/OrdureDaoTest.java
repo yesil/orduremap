@@ -28,7 +28,11 @@ public class OrdureDaoTest {
 
 	@Test
 	public void saveOrdure() {
-		Ordure ordure = new Ordure("40,40", "plastique", "yesilturk@gmail.com", new Date());
+		Ordure ordure = new Ordure("40,40");
+		ordure.setTags("plastique");
+		ordure.setReporter("yesilturk@gmail.com");
+		ordure.setDatePhoto(new Date());
+		ordure.setDateReceive(new Date());
 		ordureDao.save(ordure);
 		Ordure found = ordureDao.find(ordure.getKey());
 		assertEquals(ordure.getPosition(), found.getPosition());

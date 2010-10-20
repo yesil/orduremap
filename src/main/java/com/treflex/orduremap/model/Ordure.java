@@ -7,6 +7,7 @@ import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
 
+import com.google.appengine.api.datastore.Blob;
 import com.google.appengine.api.datastore.Key;
 
 @PersistenceCapable
@@ -15,32 +16,61 @@ public class Ordure {
 	@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
 	private Key key;
 	@Persistent
+	private double altitude;
+	@Persistent
 	private String position;
 	@Persistent
 	private String tags;
 	@Persistent
 	private String reporter;
 	@Persistent
-	private Date date;
+	private Date dateReceive;
+	@Persistent
+	private Date datePhoto;
+	@Persistent
+	private Blob image;
+	@Persistent
+	private Blob thumbnail;
 
-	public Ordure(String position, String tags, String reporter, Date date) {
+	public Blob getImage() {
+		return image;
+	}
+
+	public void setImage(Blob image) {
+		this.image = image;
+	}
+
+	public Date getDateReceive() {
+		return dateReceive;
+	}
+
+	public void setDateReceive(Date dateReceive) {
+		this.dateReceive = dateReceive;
+	}
+
+	public Date getDatePhoto() {
+		return datePhoto;
+	}
+
+	public void setDatePhoto(Date datePhoto) {
+		this.datePhoto = datePhoto;
+	}
+
+	public Ordure(String position) {
 		super();
 		this.position = position;
-		this.tags = tags;
-		this.reporter = reporter;
-		this.date = date;
 	}
 
 	public Key getKey() {
 		return key;
 	}
 
-	public Date getDate() {
-		return date;
+	public double getAltitude() {
+		return altitude;
 	}
 
-	public void setDate(Date date) {
-		this.date = date;
+	public void setAltitude(double altitude) {
+		this.altitude = altitude;
 	}
 
 	public String getPosition() {
@@ -67,8 +97,18 @@ public class Ordure {
 		this.reporter = reporter;
 	}
 
+	public final Blob getThumbnail() {
+		return thumbnail;
+	}
+
+	public final void setThumbnail(Blob thumbnail) {
+		this.thumbnail = thumbnail;
+	}
+
 	@Override
 	public String toString() {
-		return "Ordure [key=" + key + ", position=" + position + ", tags=" + tags + ", reporter=" + reporter + ", date=" + date + "]";
+		return "Ordure [key=" + key + ", position=" + position + ", tags=" + tags + ", reporter=" + reporter + ", dateReceive="
+				+ dateReceive + ", datePhoto=" + datePhoto + "]";
 	}
+
 }

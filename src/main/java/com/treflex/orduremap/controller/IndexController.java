@@ -15,4 +15,9 @@ public class IndexController {
 	public void map() {
 		LOGGER.info("Accès à la carte des ordures");
 	}
+
+	@RequestMapping(value = "/", method = RequestMethod.GET)
+	public String index() {
+		return "index";
+	}
 }

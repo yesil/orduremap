@@ -23,7 +23,7 @@ Layer</title>
 			mapTypeId : 'roadmap'
 		});
 
-		layer = new google.maps.FusionTablesLayer(277244);
+		layer = new google.maps.FusionTablesLayer(281211);
 		layer.setMap(map);
 	}
 </script>

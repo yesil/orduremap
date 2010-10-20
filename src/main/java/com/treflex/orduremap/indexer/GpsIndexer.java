@@ -1,5 +1,8 @@
 package com.treflex.orduremap.indexer;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.Format;
@@ -24,6 +27,7 @@ import org.apache.sanselan.ImageReadException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.google.appengine.api.datastore.Blob;
 import com.google.gdata.util.ServiceException;
 import com.treflex.orduremap.FusionTableHelper;
 import com.treflex.orduremap.GPSData;
@@ -74,13 +78,17 @@ public class GpsIndexer {
 			if (!message.isSet(Flag.SEEN)) {
 				final String subject = message.getSubject();
 				final Object content = message.getContent();
-				final Address[] froms = message.getFrom();
-				final String from = froms[0].toString();
-				Date date = message.getReceivedDate();
-				if (date == null) {
-					date = new Date();
+				final Address[] addresses = message.getFrom();
+				String from = null;
+				if (addresses.length > 0) {
+					final String froms[] = addresses[0].toString().split("[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}", 1);
+					from = froms[1];
 				}
-				LOGGER.info("Message reçu par " + from + " le " + dateFormatter.format(date) + " avec les tags " + subject);
+				Date dateReceive = message.getReceivedDate();
+				if (dateReceive == null) {
+					dateReceive = new Date();
+				}
+				LOGGER.info("Message reçu par " + from + " le " + dateFormatter.format(dateReceive) + " avec les tags " + subject);
 				if (content instanceof MimeMultipart) {
 					final MimeMultipart messagePart = (MimeMultipart) content;
 					final int count = messagePart.getCount();
@@ -88,7 +96,7 @@ public class GpsIndexer {
 						final BodyPart bodyPart = messagePart.getBodyPart(i);
 						final boolean isJPG = bodyPart.isMimeType("IMAGE/JPEG");
 						if (isJPG) {
-							index(bodyPart.getInputStream(), bodyPart.getFileName(), subject, from, date);
+							index(bodyPart.getInputStream(), bodyPart.getFileName(), subject, from, dateReceive);
 						}
 
 					}
@@ -101,11 +109,28 @@ public class GpsIndexer {
 		}
 	}
 
-	public void index(final InputStream imageStream, final String fileName, final String subject, final String from, final Date date) {
+	public void index(final InputStream imageStream, final String fileName, final String subject, final String from, final Date dateReceive) {
 		try {
-			final GPSData gpsData = jpegHelper.getGpsData(imageStream, fileName);
+			BufferedInputStream bis = new BufferedInputStream(imageStream);
+			bis.mark(0);
+			final GPSData gpsData = jpegHelper.getGpsData(bis, fileName);
 			LOGGER.info("GPS data: lattitude:" + gpsData.getLatitude() + " - longitude:" + gpsData.getLongitude());
-			final Ordure ordure = new Ordure(gpsData.toString(), subject, from, date);
+			final Ordure ordure = new Ordure(gpsData.toString());
+			ordure.setTags(subject);
+			ordure.setReporter(from);
+			ordure.setDatePhoto(gpsData.getDatePhoto());
+			ordure.setDateReceive(dateReceive);
+			ordure.setAltitude(gpsData.getAltitude());
+			if (gpsData.getThumbnail() != null) {
+				ordure.setThumbnail(new Blob(gpsData.getThumbnail()));
+			}
+			bis.reset();
+			ByteArrayOutputStream bout = new ByteArrayOutputStream();
+			byte[] imageBytes = new byte[4096];
+			while (bis.read(imageBytes) != -1) {
+				bout.write(imageBytes);
+			}
+			ordure.setImage(new Blob(bout.toByteArray()));
 			ordureDao.save(ordure);
 			fhelper.insert(ordure);
 		} catch (ImageReadException e) {
@@ -114,6 +139,8 @@ public class GpsIndexer {
 			LOGGER.error("Erreur IO", e);
 		} catch (ServiceException e) {
 			LOGGER.error("Error de service google lors de l'envoie des données GPS de l'ordure sur fusion tables ", e);
+		} catch (Exception e) {
+			LOGGER.error("Les données GPS n'ont pu être lus", e);
 		}
 	}
 }

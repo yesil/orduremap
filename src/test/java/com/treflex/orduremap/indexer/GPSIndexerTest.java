@@ -20,8 +20,12 @@ import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 
+import com.google.appengine.api.datastore.Key;
+import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestConfig;
 import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
+import com.treflex.orduremap.dao.OrdureDao;
+import com.treflex.orduremap.model.Ordure;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class })
@@ -30,8 +34,10 @@ public class GPSIndexerTest {
 	private final LocalServiceTestHelper helper = new LocalServiceTestHelper(new LocalDatastoreServiceTestConfig());
 	@Autowired
 	private GpsIndexer indexer;
+	@Autowired
+	OrdureDao ordureDao;
 
-	@Test
+	//@Test
 	public void mailMest() throws MessagingException, IOException, ImageReadException {
 		final Properties props = new Properties();
 		props.put("address", "imap.gmail.com");
@@ -44,8 +50,11 @@ public class GPSIndexerTest {
 	@Test
 	public void fileTest() throws MessagingException, IOException, ImageReadException {
 		final File file = new File("src/test/resources/gps-images/IMG_0269.jpg").getAbsoluteFile();
-		indexer.index(new FileInputStream(file), file.getName(), "test", "test", new Date());
-		Assert.assertTrue(true);
+		indexer.index(new FileInputStream(file), file.getName(), "test", "=?ISO-8859-1?Q?ezgi_g=FCven=E7?= <ezgi.guvenc@gmail.com>",
+				new Date());
+		Key key = KeyFactory.createKey("Ordure", 1);
+		Ordure found = ordureDao.find(key);
+		Assert.assertEquals("ezgi.guvenc@gmail.com", found.getReporter());
 	}
 
 	@Before

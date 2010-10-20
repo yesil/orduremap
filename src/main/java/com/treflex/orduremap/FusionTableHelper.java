@@ -41,6 +41,6 @@ public class FusionTableHelper {
 		writer.append("sql=" + URLEncoder.encode(query, "UTF-8"));
 		writer.flush();
 		request.execute();
-		LOGGER.info("Insertion de {} a été terminé avec succès" + ordure.toString());
+		LOGGER.info("Insertion de " + ordure.toString() + " a été terminé avec succès");
 	}
 }

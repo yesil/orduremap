@@ -75,6 +75,46 @@
 					</dependency>
 				</dependencies>
 			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<version>1.6</version>
+				<executions>
+					<execution>
+						<id>ant-compile-classes</id>
+						<phase>compile</phase>
+						<configuration>
+							<target>
+								<copy todir="src/main/webapp/WEB-INF/classes">
+									<fileset dir="target/classes" />
+								</copy>
+							</target>
+						</configuration>
+						<goals>
+							<goal>run</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>ant-clean</id>
+						<phase>clean</phase>
+						<configuration>
+							<target>
+								<deltree dir="src/main/webapp/WEB-INF/classes" />
+							</target>
+						</configuration>
+						<goals>
+							<goal>run</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>dependency-maven-plugin</artifactId>
+				<configuration>
+					<outputDirectory>src/main/webapp/WEB-INF/lib</outputDirectory>
+				</configuration>
+			</plugin>
 		</plugins>
 	</build>
 	<dependencies>
@@ -176,13 +216,12 @@
 			<groupId>com.google.appengine</groupId>
 			<artifactId>datanucleus-jpa</artifactId>
 			<version>1.1.5</version>
-			<scope>runtime</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.google.appengine</groupId>
 			<artifactId>geronimo-jpa_3.0_spec</artifactId>
 			<version>1.1.1</version>
-			<scope>runtime</scope>
+			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>commons-fileupload</groupId>
