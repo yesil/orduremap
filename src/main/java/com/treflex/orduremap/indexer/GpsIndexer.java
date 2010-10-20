@@ -2,6 +2,7 @@ package com.treflex.orduremap.indexer;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -111,8 +112,13 @@ public class GpsIndexer {
 
 	public void index(final InputStream imageStream, final String fileName, final String subject, final String from, final Date dateReceive) {
 		try {
-			BufferedInputStream bis = new BufferedInputStream(imageStream);
-			bis.mark(0);
+			ByteArrayOutputStream bout = new ByteArrayOutputStream();
+			byte[] imageBytes = new byte[4096];
+			while (imageStream.read(imageBytes) != -1) {
+				bout.write(imageBytes);
+			}
+			bout.flush();
+			ByteArrayInputStream bis = new ByteArrayInputStream(bout.toByteArray());
 			final GPSData gpsData = jpegHelper.getGpsData(bis, fileName);
 			LOGGER.info("GPS data: lattitude:" + gpsData.getLatitude() + " - longitude:" + gpsData.getLongitude());
 			final Ordure ordure = new Ordure(gpsData.toString());
@@ -123,12 +129,6 @@ public class GpsIndexer {
 			ordure.setAltitude(gpsData.getAltitude());
 			if (gpsData.getThumbnail() != null) {
 				ordure.setThumbnail(new Blob(gpsData.getThumbnail()));
-			}
-			bis.reset();
-			ByteArrayOutputStream bout = new ByteArrayOutputStream();
-			byte[] imageBytes = new byte[4096];
-			while (bis.read(imageBytes) != -1) {
-				bout.write(imageBytes);
 			}
 			ordure.setPhoto(new Blob(bout.toByteArray()));
 			ordureDao.save(ordure);

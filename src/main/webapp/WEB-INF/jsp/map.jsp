@@ -5,8 +5,7 @@
 <head>
 <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
 <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
-<title>Google Maps JavaScript API v3 Example: Fusion Tables
-Layer</title>
+<title>orduremap.com</title>
 <link
 	href="http://code.google.com/apis/maps/documentation/javascript/examples/default.css"
 	rel="stylesheet" type="text/css" />
@@ -22,6 +21,9 @@ Layer</title>
 			zoom : 9,
 			mapTypeId : 'roadmap'
 		});
+		//map.addMapType(G_SATELLITE_3D_MAP);
+		//map.addControl(new GHierarchicalMapTypeControl());
+		//map.addControl(new GLargeMapControl());
 
 		layer = new google.maps.FusionTablesLayer(281211);
 		layer.setMap(map);

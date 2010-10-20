@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<project name="maven-antrun-" default="main"  >
+<target name="main">
+  <deltree dir="src/main/webapp/WEB-INF/classes"/>
+  <deltree dir="src/main/webapp/WEB-INF/lib"/>
+</target>
+</project>

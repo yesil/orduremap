@@ -29,7 +29,7 @@ public class IndexController {
 		LOGGER.info("Accès à la carte des ordures");
 	}
 
-	@RequestMapping(value="/ordures/{ordureId}", method=RequestMethod.GET)
+	@RequestMapping(value = "/ordures/{ordureId}", method = RequestMethod.GET)
 	public void findOrdure(@PathVariable String ordureId, HttpServletResponse response) throws IOException {
 		final Key key = KeyFactory.createKey("Ordure", Long.parseLong(ordureId));
 		final Ordure ordure = ordureDao.find(key);
