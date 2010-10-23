@@ -18,10 +18,13 @@ public class FileUpoadController {
 	private GpsIndexer gpsIndexer;
 
 	@RequestMapping(value = "/upload", method = RequestMethod.POST)
-	public void upload(final @RequestParam("name") String name, final @RequestParam("file") MultipartFile file) throws IOException {
+	public String upload(final @RequestParam("name") String name, final @RequestParam("latitude") String latitude,
+			final @RequestParam("longitude") String longitude, final @RequestParam("tags") String tags,
+			final @RequestParam("file") MultipartFile file) throws IOException {
 		if (!file.isEmpty()) {
-			gpsIndexer.index(file.getInputStream(), name, "web", "web", new Date());
+			gpsIndexer.index(file.getInputStream(), name, tags, "orduremap.anroid", new Date(), latitude + "," + longitude);
 		}
+		return "index";
 	}
 
 }

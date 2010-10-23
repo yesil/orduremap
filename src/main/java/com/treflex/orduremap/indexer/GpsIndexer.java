@@ -1,7 +1,5 @@
 package com.treflex.orduremap.indexer;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -135,6 +133,28 @@ public class GpsIndexer {
 			fhelper.insert(ordure);
 		} catch (ImageReadException e) {
 			LOGGER.error("Erreur lors de la lecture de l'image", e);
+		} catch (IOException e) {
+			LOGGER.error("Erreur IO", e);
+		} catch (ServiceException e) {
+			LOGGER.error("Error de service google lors de l'envoie des données GPS de l'ordure sur fusion tables ", e);
+		} catch (Exception e) {
+			LOGGER.error("Les données GPS n'ont pu être lus", e);
+		}
+	}
+
+	public void index(final InputStream imageStream, final String fileName, final String subject, final String from,
+			final Date dateReceive, String position) {
+		try {
+			byte[] imageBytes = new byte[imageStream.available()];
+			imageStream.read(imageBytes);
+			LOGGER.info("GPS data: position:" + position);
+			final Ordure ordure = new Ordure(position);
+			ordure.setTags(subject);
+			ordure.setReporter(from);
+			ordure.setDateReceive(dateReceive);
+			ordure.setPhoto(new Blob(imageBytes));
+			ordureDao.save(ordure);
+			fhelper.insert(ordure);
 		} catch (IOException e) {
 			LOGGER.error("Erreur IO", e);
 		} catch (ServiceException e) {
